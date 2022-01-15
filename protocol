@@ -1,0 +1,22 @@
+The following is a description of the protocol used for communication
+between monitor and agents.  The networking protocol is IP, and due to
+the nature of IP (it doesn't preserve message boundaries) the following
+lists what constitues a full (complete) message.
+
+The message consist of mearly strings of text.  Precisly 4 bytes in length,
+counting the terminating character which is a single '0'.  The strings are
+as follow:
+
+Trasmissions sent by Monitor (server side):
+
+Trasmission String		Meaning
+:->0				hello
+:-(0				utility power lost
+:-)0				utility power restored
+:-|0				Administrative shutdown of monitor
+;->0				routine comm between monitor to agent
+				*Note currently, unimplemented
+
+Trasmissions sent by Agent (client side):
+:-)0				Positive acknowledgment
+:-(0				Negative acknowledgment, resend data
