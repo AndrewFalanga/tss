@@ -1,10 +1,7 @@
 .PHONY: all clean
 
-all: tss tssc
-
-tss: tss.o tss_func.o
-
-tssc: tssc.o tss_func.o
+all:
+	$(MAKE) -C src
 
 clean:
-	$(RM) *.o tss tssc
+	$(MAKE) -C src $@
