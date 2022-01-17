@@ -19,7 +19,7 @@
 #include <signal.h>
 #include <unistd.h>
 #include <syslog.h>
-#include <varargs.h>
+#include <stdarg.h>
 #include <fcntl.h>
 #include <errno.h>
 #include <netdb.h>
