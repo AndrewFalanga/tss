@@ -1,11 +1,11 @@
 /*
 {-----------------------------------------------------------------------}
-{			tss.h						}
-{									}
-{ Desc:	headerfile for the tss program, manually created for tss.c	}
-{									}
-{ Copyright (c)	Andrew Falanga 						}
-{ April 24, 2001							}
+{                        tss.h                                          }
+{                                                                       }
+{ Desc: headerfile for the tss program, manually created for tss.c      }
+{                                                                       }
+{ Copyright (c)        Andrew Falanga                                   }
+{ April 24, 2001                                                        }
 {-----------------------------------------------------------------------}
 */
 
@@ -34,7 +34,7 @@
 
 /* ------------------------------------------------------------------- */
 
-#define PORT 5035	/* arbitrary port, no reason */
+#define PORT 5035        /* arbitrary port, no reason */
 #define SLEEP_INTERVAL 14400 /* 4 hours, wake up 6 times a day */
 #define SHUTDOWN_INTERVAL 300  /* 5 minutes */
 #define MYBUFF 6 /* max size for string buffers */

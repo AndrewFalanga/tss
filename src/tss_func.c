@@ -1,18 +1,18 @@
 /*
 {-----------------------------------------------------------------------}
-{ File:		tss_func.c						}
-{									}
-{ Purpose:	contains all "global" functions for the tss program	}
-{		and it's agents						}
-{									}
-{ Copyright 2001 Andrew Falanga (c)					}
-{   All Rights Reserved							}
-{									}
+{ File:                tss_func.c                                                }
+{                                                                        }
+{ Purpose:        contains all "global" functions for the tss program        }
+{                and it's agents                                                }
+{                                                                        }
+{ Copyright 2001 Andrew Falanga (c)                                        }
+{   All Rights Reserved                                                        }
+{                                                                        }
 {-----------------------------------------------------------------------}
 */
 /*
 {-----------------------------------------------------------------------}
-{ DLM:		March 16, 2002						}
+{ DLM:                March 16, 2002                                                }
 {-----------------------------------------------------------------------}
 */
 
@@ -25,9 +25,9 @@ extern const char *Mon_Msg[];
 /*---------------------------------------------------------------------*/
 
 /*
- * Function:	tssfork()
- * Purpose:	only to turn the process of forking to a child
- *		less muddy to main program code files
+ * Function:        tssfork()
+ * Purpose:        only to turn the process of forking to a child
+ *                less muddy to main program code files
  */
 
 void tssfork(void)
@@ -35,23 +35,23 @@ void tssfork(void)
   switch(fork())
   {
     case -1:
-	syslog(LOG_CRIT, "fork() didn't work, exiting");
-	exit(7);
-    case  0:	/* child process */
-	break;
-    default:	/* parent */
-	exit(0);
+        syslog(LOG_CRIT, "fork() didn't work, exiting");
+        exit(7);
+    case  0:        /* child process */
+        break;
+    default:        /* parent */
+        exit(0);
   }
 }
 
 /*
- * Function:	ProcessID()
- * Purpose:	To write the process ID of the daemon to /var/run/tss.pid
- * Use:		Mainly, at this point, it is only used by the apc-upsd
- *		software to comm to the monitor portion of the code
- *		however, it's included in the agent for properly
- *		documenting the PID and for use with other programs should
- *		the need arise.
+ * Function:        ProcessID()
+ * Purpose:        To write the process ID of the daemon to /var/run/tss.pid
+ * Use:                Mainly, at this point, it is only used by the apc-upsd
+ *                software to comm to the monitor portion of the code
+ *                however, it's included in the agent for properly
+ *                documenting the PID and for use with other programs should
+ *                the need arise.
  */
 
 int processID(void)
@@ -67,23 +67,23 @@ int processID(void)
 }
 
 /*
- * Function:	p_string(char*)
- * Purpose:	This function serves the purpose of parsing the actual
- *		contents of the buffer to which data, transmitted from
- *		the monitor to agents, is stored.  Determine what the
- *		message is, and return an integer value to correspond
- *		to.  The function returns -1 if nothing meaningful is
- *		read.
+ * Function:        p_string(char*)
+ * Purpose:        This function serves the purpose of parsing the actual
+ *                contents of the buffer to which data, transmitted from
+ *                the monitor to agents, is stored.  Determine what the
+ *                message is, and return an integer value to correspond
+ *                to.  The function returns -1 if nothing meaningful is
+ *                read.
  *
- * Notes:	a single char variable is used to keep track of the current
- *		system state.  The following values are used:
- *		s -- startup state
- *			this value will only exist upon program start, or
- *			when the agent has received notification that the
- *			monitor is going offline
- *		k -- kill state
- *			this value will exist when the monitor sends shutdown
- *		r -- normal run state
+ * Notes:        a single char variable is used to keep track of the current
+ *                system state.  The following values are used:
+ *                s -- startup state
+ *                        this value will only exist upon program start, or
+ *                        when the agent has received notification that the
+ *                        monitor is going offline
+ *                k -- kill state
+ *                        this value will exist when the monitor sends shutdown
+ *                r -- normal run state
  */
 
 Message p_string(const char *str)
@@ -105,8 +105,8 @@ Message p_string(const char *str)
 }
 
 /*
- * Func:	usgerr
- * Pur:		to display the correct usage of this program
+ * Func:        usgerr
+ * Pur:                to display the correct usage of this program
  *
  */
 
@@ -116,8 +116,8 @@ void usgerr()
 }
 
 /*
- * Func:	ver
- * Pur:		to display the current version #
+ * Func: ver
+ * Pur:  to display the current version #
  *
  */
 
@@ -127,9 +127,9 @@ void ver()
 }
 
 /*
- * Func:	receivemsg()
- * Pur:		function that will actually read from the file descriptor
- *		the data being sent from either monitor or agent.
+ * Func: receivemsg()
+ * Pur:  function that will actually read from the file descriptor
+ *       the data being sent from either monitor or agent.
  */
 
 int receivemsg(int sock, char *hold)
@@ -150,11 +150,11 @@ int sendmesg(int sock, const char *hold)
   int sent=0;
   while(sent !=4)
     sent=send(sock, hold, MSG_LEN, MSG_NOSIGNAL);
-  
+
   return sent;
 }
 
 /*
- * Function:	openchannel()
- * Purp:	This function 
+ * Function:        openchannel()
+ * Purp:        This function
 int openchannel(int *); // prototype, source in tss_func.c */
