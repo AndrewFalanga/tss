@@ -1,6 +1,6 @@
 /*
  *
- *  tss_func.c
+ *  tss_common.c
  *
  *  Contains all "global" functions for the tss program
  *  and it's agents
@@ -15,11 +15,17 @@
  *
  */
 
-#include "tss.h"
+#include "tss_common.h"
 
 /*---------------------------------------------------------------------*/
 
-extern const char *Mon_Msg[];
+const char *MsgText[] = {
+    MSG_HELLO,
+    MSG_PWR_OFF,
+    MSG_PWR_ON,
+    MSG_ADM_ACT,
+    MSG_CHK_IN
+};
 
 /*---------------------------------------------------------------------*/
 
@@ -85,22 +91,23 @@ int processID(void)
  *                r -- normal run state
  */
 
+/* TODO change the name of this */
 Message p_string(const char *str)
 {
-  if(strstr(str, ";->0"))
-    return chkup;
+  if(strstr(str, MSG_CHK_IN))
+    return ChkIn;
 
-  if(strstr(str, ":->0"))
-    return hello;
+  if(strstr(str, MSG_HELLO))
+    return Hello;
 
-  if(strstr(str, ":-(0"))
-    return pwroff;
+  if(strstr(str, MSG_PWR_OFF))
+    return Pwroff;
 
-  if(strstr(str, ":-)0"))
-    return pwron;
+  if(strstr(str, MSG_PWR_ON))
+    return Pwron;
 
-  if(strstr(str, ":-|0"))
-    return admact;
+  if(strstr(str, MSG_ADM_ACT))
+    return Admact;
 }
 
 /*
