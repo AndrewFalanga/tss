@@ -1,68 +1,62 @@
+/*******************************
+ *  Copyright (c) Andrew Falanga
+ *  May 16, 2001,2023
+ *******************************
+ */
 /*
-{-----------------------------------------------------------------------}
-{                                                                       }
-{ Copyright (c) Andrew Falanga                                          }
-{ May 16, 2001                                                          }
-{-----------------------------------------------------------------------}
-*/
-/*
-{-----------------------------------------------------------------------}
-{ Program:                tss.c                                         }
-{                                                                       }
-{ Purpose:       This program will eventually run in two modes.  One    }
-{                as a monitor on the system actually monitoring the UPS }
-{                and as agents on the systems plugged in to that UPS    }
-{                but unable to know when power has been lost.  This     }
-{                code is dependant upon modifications to the UPS monitor}
-{                supplied by the mfg.                                   }
-{                                                                       }
-{ Desc:          Currently, upon invocation, the monitor must be s      }
-{                the host names of it's agents.  It then communicates   }
-{                a simple string of Hello, to them.  Once comm to the   }
-{                agents has been established, the monitor drops to      }
-{                daemon mode.  Therefore, the agents must be started    }
-{                before the monitor program since they must be listening}
-{                for the monitor to initiate contact.  This deficiency  }
-{                will be fixed in future releases, but for now I had    }
-{                to get it going.                                       }
-{                                                                       }
-{ Date Created:        April 23, 2001                                   }
-{ DLM:                March 16, 2002                                    }
-{                                                                       }
-{ Change Log:         *Additions made here follow YYYYMMDD - then change}
-{ 20010424        Further work on the code                              }
-{ 20010507        ditto                                                 }
-{ 20010508        ditto                                                 }
-{ 20010509        ditto                                                 }
-{ 20010510        I've really been going about this all the wrong way   }
-{                I need to make this much less complex.  The server     }
-{                hereafter to be known as monitor, will start and       }
-{                check to see if the authorized hosts in the config file}
-{                are alive.  The Agents will then listen for the        }
-{                monitor for instructions                               }
-{ 20010606        Added support for version indentification using -v    }
-{ 20011211        added support for SIGTERM signal handling             }
-{                                                                       }
-{ Notes:                                                                }
-{-----------------------------------------------------------------------}
-*/
+ *
+ *  Program:       tss.c
+ *
+ *  Purpose:       This program will eventually run in two modes.  One
+ *                 as a monitor on the system actually monitoring the UPS
+ *                 and as agents on the systems plugged in to that UPS
+ *                 but unable to know when power has been lost.  This
+ *                 code is dependant upon modifications to the UPS monitor
+ *                 supplied by the mfg.
+ *
+ *  Desc:          Currently, upon invocation, the monitor must be s
+ *                 the host names of it's agents.  It then communicates
+ *                 a simple string of Hello, to them.  Once comm to the
+ *                 agents has been established, the monitor drops to
+ *                 daemon mode.  Therefore, the agents must be started
+ *                 before the monitor program since they must be listening
+ *                 for the monitor to initiate contact.  This deficiency
+ *                 will be fixed in future releases, but for now I had
+ *                 to get it going.
+ *
+ *  Date Created:        April 23, 2001
+ *
+ *  Change Log:         *Additions made here follow YYYYMMDD - then change
+ *  20010424        Further work on the code
+ *  20010507        ditto
+ *  20010508        ditto
+ *  20010509        ditto
+ *  20010510        I've really been going about this all the wrong way
+ *                 I need to make this much less complex.  The server
+ *                 hereafter to be known as monitor, will start and
+ *                 check to see if the authorized hosts in the config file
+ *                 are alive.  The Agents will then listen for the
+ *                 monitor for instructions
+ *  20010606        Added support for version indentification using -v
+ *  20011211        added support for SIGTERM signal handling
+ *
+ */
 
 #include "tss.h"
 
 /* ------------------------------------------------------------------- */
 
-struct agent_struct{
+struct agent_ {
     struct sockaddr_in agent_adr;
     struct hostent * host;
 };
 
-typedef struct agent_struct Agent;
+typedef struct agent_ Agent;
 
 Agent * agent;
 int num_agents; /* for host count, argc -1 */
-Cur_Stat mystat;
+Status mystat;
 
-const char *Mon_Msg[] = {":->0", ":-(0", ":-)0", ":-|0", ";->0"};
 
 /* ------------------------------------------------------------------- */
 

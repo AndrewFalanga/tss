@@ -40,27 +40,31 @@
 #define MYBUFF 6               /* max size for string buffers */
 #define MSG_LEN 4              /* length of bytes transmitted or received */
 #define USGERR "tssd must be supplied either host names or -v for version\n"
-#define VERSION "This is version 3.5.01 of The Shutdown Server\n"
+#define VERSION "3.5.01\n"
 #define MESSAGE "Agents notified of admin shutdown, gracefully exiting"
 
 /* ------------------------------------------------------------------- */
 
-typedef enum Stat {startup, run, vulnerable, shdown} Cur_Stat;
-typedef enum trans {hello, pwroff, pwron, admact, chkup} Message;
+#define MSG_HELLO   ":->0"
+#define MSG_PWR_OFF ":-(0"
+#define MSG_PWR_ON  ":-)0"
+#define MSG_ADM_ACT ":-|0"
+#define MSG_CHK_IN  ";->0"
 
-/* ------------------------------------------------------------------- */
+typedef enum {
+    Startup,
+    Run,
+    Vulnerable,
+    Shdown
+} Status;
 
-int processID(void); // prototype, source in tss_func.c
-void tssfork(void); // prototype, source in tss_func.c
-Message p_string(const char *); // prototype, source in tss_func.c
-void usgerr(void); // prototype, source in tss_func.c
-void ver(void); // prototype, source in tss_func.c
-int tx_rx(int *, int); // prototype, source in tss_func.c
-int receivemsg(int, char *); // prototype, source in tss_func.c
-int sendmesg(int, const char *); // prototype, source in tss_func.c
-int openchannel(int *); // prototype, source in tss_func.c
-
-/* ------------------------------------------------------------------- */
+typedef enum {
+    Hello,
+    Pwroff,
+    Pwron,
+    Admact,
+    Chkup
+} Message;
 
 
 #endif
