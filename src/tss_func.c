@@ -1,20 +1,18 @@
 /*
-{-----------------------------------------------------------------------}
-{ File:                tss_func.c                                                }
-{                                                                        }
-{ Purpose:        contains all "global" functions for the tss program        }
-{                and it's agents                                                }
-{                                                                        }
-{ Copyright 2001 Andrew Falanga (c)                                        }
-{   All Rights Reserved                                                        }
-{                                                                        }
-{-----------------------------------------------------------------------}
-*/
-/*
-{-----------------------------------------------------------------------}
-{ DLM:                March 16, 2002                                                }
-{-----------------------------------------------------------------------}
-*/
+ *
+ *  tss_func.c
+ *
+ *  Contains all "global" functions for the tss program
+ *  and it's agents
+ *
+ *  Copyright 2001,2023 Andrew Falanga (c)
+ *    All Rights Reserved
+ *
+ *
+ *
+ *  DLM:                March 16, 2002
+ *
+ */
 
 #include "tss.h"
 
