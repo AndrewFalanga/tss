@@ -95,19 +95,79 @@ int processID(void)
 Message p_string(const char *str)
 {
   if(strstr(str, MSG_CHK_IN))
-    return ChkIn;
+    return CheckIn;
 
   if(strstr(str, MSG_HELLO))
     return Hello;
 
   if(strstr(str, MSG_PWR_OFF))
-    return Pwroff;
+    return PowerOff;
 
   if(strstr(str, MSG_PWR_ON))
-    return Pwron;
+    return PowerOn;
 
   if(strstr(str, MSG_ADM_ACT))
-    return Admact;
+    return AdminAction;
+}
+
+/*
+ * IsHello
+ *
+ * @param s the string read from the remote
+ *
+ * @return boolean
+ */
+boolean IsHello(const char* s)
+{
+    return p_string(s) == Hello;
+}
+
+/*
+ * IsPowerOn
+ *
+ * @param s the string read from the remote
+ *
+ * @return boolean
+ */
+boolean IsPowerOn(const char* s)
+{
+    return p_string(s) == PowerOn;
+}
+
+/*
+ * IsPowerOff
+ *
+ * @param s the string read from the remote
+ *
+ * @return boolean
+ */
+boolean IsPowerOff(const char* s)
+{
+    return p_string(s) == PowerOff;
+}
+
+/*
+ * IsAdminAction
+ *
+ * @param s the string read from the remote
+ *
+ * @return boolean
+ */
+boolean IsAdminAction(const char* s)
+{
+    return p_string(s) == AdminAction;
+}
+
+/*
+ * IsCheckIn
+ *
+ * @param s the string read from the remote
+ *
+ * @return boolean
+ */
+boolean IsCheckIn(const char* s)
+{
+    return p_string(s) == CheckIn;
 }
 
 /*

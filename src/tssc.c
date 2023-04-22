@@ -1,61 +1,58 @@
 /*
-{-----------------------------------------------------------------------}
-{                                                                       }
-{ Copyright (c) Andrew Falanga                                          }
-{ May 16, 2001                                                          }
-{-----------------------------------------------------------------------}
-*/
-/*
-{-----------------------------------------------------------------------}
-{ Program:    tssc.c                                                    }
-{                                                                       }
-{ Desc:        The client side to "The Shutdown Server"                 }
-{                                                                       }
-{ Purp:        To run in daemon mode, open a connection to the tss      }
-{        over IP and basically monitor what's happening and             }
-{        in the event that the server sends out a disaster              }
-{        broadcast, perform a clean shutdown of the file system         }
-{        and OS.                                                        }
-{                                                                       }
-{ Date Created:    May 7, 2001                                          }
-{ DLM:        March 19, 2002                                            }
-{                                                                       }
-{ Change log:                                                           }
-{ YYYYMMDD     reason for change                                        }
-{ 20010508    further work on the code                                  }
-{ 20010509    further development, (see notes below for detail)         }
-{ 20010510    further development, (see notes below for detail)         }
-{ 20010531    redid code so that enters daemon mode upon                }
-{        instantiation, rather than after the monitor starts.           }
-{        Hopefully, with these mod's the program can be added to        }
-{        rc.local and start as a system process.                        }
-{ 20011217    added support for the newly written p_string()            }
-{ 20230212  Long time! Wow, I was dumb for making such a ridiculous     }
-{           header. Yeah, it looks good, but really! Too much!          }
-{                                                                       }
-{ Notes:                                                                }
-{    coded enough that the client now opens connection, and sends       }
-{    a string to which the server appends a new string and returns      }
-{    the appended string                                                }
-{                                                                       }
-{    Realized today that I'd been thinking about this the wrong way     }
-{    Instead of the server listening for incoming connections           }
-{    it should be the clients listening for ther server                 }
-{    The code must be reworked to reflect the new design                }
-{-----------------------------------------------------------------------}
-*/
+ *                                                                        }
+ *  Copyright 2001, 2023 (c) Andrew Falanga                                          }
+ *
+ *  Program:    tssc.c                                                    }
+ *                                                                        }
+ *  Desc:        The client side to "The Shutdown Server"                 }
+ *                                                                        }
+ *  Purp:        To run in daemon mode, open a connection to the tss      }
+ *         over IP and basically monitor what's happening and             }
+ *         in the event that the server sends out a disaster              }
+ *         broadcast, perform a clean shutdown of the file system         }
+ *         and OS.                                                        }
+ *                                                                        }
+ *  Date Created:    May 7, 2001                                          }
+ *  DLM:        March 19, 2002                                            }
+ *                                                                        }
+ *  Change log:                                                           }
+ *  YYYYMMDD     reason for change                                        }
+ *  20010508    further work on the code                                  }
+ *  20010509    further development, (see notes below for detail)         }
+ *  20010510    further development, (see notes below for detail)         }
+ *  20010531    redid code so that enters daemon mode upon                }
+ *         instantiation, rather than after the monitor starts.           }
+ *         Hopefully, with these mod's the program can be added to        }
+ *         rc.local and start as a system process.                        }
+ *  20011217    added support for the newly written p_string()            }
+ *  20230212  Long time! Wow, I was dumb for making such a ridiculous     }
+ *            header. Yeah, it looks good, but really! Too much!          }
+ *                                                                        }
+ *  Notes:                                                                }
+ *     coded enough that the client now opens connection, and sends       }
+ *     a string to which the server appends a new string and returns      }
+ *     the appended string                                                }
+ *                                                                        }
+ *     Realized today that I'd been thinking about this the wrong way     }
+ *     Instead of the server listening for incoming connections           }
+ *     it should be the clients listening for ther server                 }
+ *     The code must be reworked to reflect the new design                }
+ * -----------------------------------------------------------------------}
+ */
 
-#include "tss.h"
+#include "tss_common.h"
 
 /* ------------------------------------------------------------------- */
 
 const char *Agt_Msg[] = {":-)0", ":-(0"}; // acknowledgment strings
-Cur_Stat mystat; // status indicator
+Status mystat; // status indicator
+
+extern const char *MsgText[];
 
 /* ------------------------------------------------------------------- */
 
-static void Shutdown(void);
-static void TermHandle(int);
+static void GracefulShutdown(void);
+static void SigHandler(int);
 static void takeaction(Message, pid_t *);
 
 /* ------------------------------------------------------------------- */
@@ -71,7 +68,7 @@ int main(int argc, char **argv)
 
     pid_t childpid;
     ssize_t r = 0, w = 0; // for read() & write()
-    mystat = startup; // set current status at startup
+    mystat = Startup; // set current status at startup
 
     if(argc > 1)
     {
@@ -92,7 +89,7 @@ int main(int argc, char **argv)
     openlog("tsscd", LOG_PID, LOG_DAEMON);
     syslog(LOG_INFO, "tsscd is alive as daemon");
 
-    (void)signal(SIGTERM, TermHandle);
+    (void)signal(SIGTERM, SigHandler);
 
     if(!processID())
         syslog(LOG_INFO, "Can't create /var/run/tss.pid file");
@@ -127,15 +124,14 @@ int main(int argc, char **argv)
             syslog(LOG_INFO, "Can't set sock options!!");
 #endif
 
+        /* TODO these need to be better */
         while(r=receivemsg(socket2, buff))
         {
-            if(r == 4) printf("r does equal 4\n");
-            break;
+            if(r == 4) break;
         }
-        while(w=sendmesg(socket2, Agt_Msg[0]))
+        while(w=sendmesg(socket2, MsgText[PositiveAck]))
         {
-            if(w == r);
-            break;
+            if(w == r) break;
         }
 
         takeaction(p_string(buff), &childpid);
@@ -159,7 +155,7 @@ int main(int argc, char **argv)
 {-----------------------------------------------------------------------}
 */
 
-static void Shutdown(void)
+static void GracefulShutdown(void)
 {
     sleep(SHUTDOWN_INTERVAL);
 
@@ -174,7 +170,7 @@ static void Shutdown(void)
 
 /*
 {-----------------------------------------------------------------------}
-{ Function:    TermHandle                        }
+{ Function:    SigHandler                        }
 {                                    }
 { Purpose:    This function will handle things when the TERM signal    }
 {        has been received.  Either explicitly, by an admin, or    }
@@ -182,7 +178,7 @@ static void Shutdown(void)
 {                                    }
 {-----------------------------------------------------------------------}
 */
-static void TermHandle(int x)
+static void SigHandler(int x)
 {
     syslog(LOG_INFO, "TERM signal received, agent exiting");
     exit(0);
@@ -202,33 +198,33 @@ void takeaction(Message act, pid_t * cpid)
 {
     switch(act)
     {
-        case pwroff: // shutdown directive received
+        case PowerOff: // shutdown directive received
             syslog(LOG_CRIT, "Power lost, shutdown in 5 minutes");
-            mystat = shdown;
+            mystat = Shutdown;
 
             if((*cpid=fork())==0)
-                Shutdown();
+                GracefulShutdown();
             break;
 
-        case admact: // notification that the monitor is going down
+        case AdminAction: // notification that the monitor is going down
             syslog(LOG_CRIT, "mon going off-line, system in vulnerable state!");
-            mystat = vulnerable;
+            mystat = Vulnerable;
             break;
 
-        case pwron: // notification that power is back
+        case PowerOn: // notification that power is back
             // kill(*cpid, SIGKILL);
             kill(*cpid, SIGTERM);
             *cpid = wait(NULL);
             syslog(LOG_CRIT, "Power restored, shutdown sequence canceled!");
-            mystat = run;
+            mystat = Run;
             break;
 
-        case hello: // monitor says hello and comm is established
+        case Hello: // monitor says hello and comm is established
             syslog(LOG_INFO, "tsscd, comm established with monitor");
-            mystat = run;
+            mystat = Run;
             break;
 
-        case chkup: // agent turned on after monitor
+        case CheckIn: // agent turned on after monitor
             syslog(LOG_INFO, "routine checkup");
             break;
 

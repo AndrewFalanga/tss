@@ -51,20 +51,31 @@
 #define MSG_ADM_ACT ":-|0"
 #define MSG_CHK_IN  ";->0"
 
+typedef uint8_t boolean;
+
 typedef enum {
     Startup,
     Run,
     Vulnerable,
-    Shdown
+    Shutdown
 } Status;
 
 typedef enum {
     Hello,
-    Pwroff,
-    Pwron,
-    Admact,
-    ChkIn
+    PowerOff,
+    PowerOn,
+    AdminAction,
+    CheckIn
 } Message;
+
+/*
+ * Probably a poor design, but I was a young programmer 22 years ago. I used the happy/sad
+ * faces which also represented PowerOn/PowerOff.
+ */
+typedef enum {
+    PositiveAck = (int)PowerOn,
+    NegativeAck = (int)PowerOff,
+} Acks;
 
 int processID(void); // prototype, source in tss_func.c
 void tssfork(void); // prototype, source in tss_func.c
@@ -75,5 +86,11 @@ int tx_rx(int *, int); // prototype, source in tss_func.c
 int receivemsg(int, char *); // prototype, source in tss_func.c
 int sendmesg(int, const char *); // prototype, source in tss_func.c
 int openchannel(int *); // prototype, source in tss_func.c
+
+boolean IsHello(const char*);
+boolean IsPowerOn(const char*);
+boolean IsPowerOff(const char*);
+boolean IsAdminAction(const char*);
+boolean IsCheckIn(const char*);
 
 #endif
