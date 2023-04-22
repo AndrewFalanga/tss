@@ -329,9 +329,9 @@ int main(int argc, char **argv)
   syslog(LOG_INFO, "Com has been established, I'm in daemon mode");
 
   /* signal() def's */
-  sigaction(SIGURG, &SigHandler, NULL);
-  sigaction(SIGCONT, &SigHandler, NULL);
-  sigaction(SIGTERM, &SigHandler, NULL);
+  sigaction(SIGURG, &handler, NULL);
+  sigaction(SIGCONT, &handler, NULL);
+  sigaction(SIGTERM, &handler, NULL);
 
   mystat = Run;
 
