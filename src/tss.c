@@ -93,18 +93,17 @@ static void SendPowerOff()
       continue;
     }
 
-    while (w = sendmesg(socket1, MsgText[PowerOff]))
+    while ((w = sendmesg(socket1, MsgText[PowerOff])))
     {
-      if (w == 4);
-      break;
+      if (w == 4) break;
     }
 
     memset(buff, 0, MYBUFF);
-    while (r = receivemsg(socket1, buff));
+    while ((r = receivemsg(socket1, buff)))
     {
-      if (r == 4);
-      break;
+      if (r == 4) break;
     }
+
     if (IsPowerOn(buff))
       syslog(LOG_INFO, "%s notifed powerdown", agent[index].host->h_name);
 
@@ -143,18 +142,17 @@ static void SendPowerRestored()
       continue;
     }
 
-    while (w = sendmesg(socket1, MsgText[PowerOn]))
+    while ((w = sendmesg(socket1, MsgText[PowerOn])))
     {
-      if (w == 4);
-      break;
+      if (w == 4) break;
     }
 
     memset(buff, 0, MYBUFF);
-    while (r = receivemsg(socket1, buff));
+    while ((r = receivemsg(socket1, buff)))
     {
-      if (r == 4);
-      break;
+      if (r == 4) break;
     }
+
     if (IsPowerOn(buff))
       syslog(LOG_INFO, "%s notifed powerback", agent[index].host->h_name);
 
@@ -196,18 +194,17 @@ static void UserTerm()
       continue;
     }
 
-    while (w = sendmesg(socket1, MsgText[AdminAction]))
+    while ((w = sendmesg(socket1, MsgText[AdminAction])))
     {
-      if (w == 4);
-      break;
+      if (w == 4) break;
     }
 
     memset(buff, 0, MYBUFF);
-    while (r = receivemsg(socket1, buff));
+    while ((r = receivemsg(socket1, buff)))
     {
-      if (r == 4);
-      break;
+      if (r == 4) break;
     }
+
     if (IsPowerOn(buff))
       syslog(LOG_INFO, "%s notifed adm shtdwn", agent[index].host->h_name);
 
@@ -301,18 +298,18 @@ int main(int argc, char **argv)
     }
 #endif
 
-    while (w = sendmesg(socket1, MsgText[Hello]))
+    while ((w = sendmesg(socket1, MsgText[Hello])))
     {
-      if (w == 4);
-      break;
+      if (w == 4) break;
     }
 
     memset(buff, 0, MYBUFF);
-    while (r = receivemsg(socket1, buff))
+    while ((r = receivemsg(socket1, buff)))
     {
       if (r == 4) syslog(LOG_INFO, "Positive acknowlegment");
       break;
     }
+
     if (IsPowerOn(buff))
       syslog(LOG_INFO, "Comm est. with %s", agent[index].host->h_name);
 
