@@ -1,16 +1,16 @@
 /*
-{-----------------------------------------------------------------------}
-{			tss.h						}
-{									}
-{ Desc:	headerfile for the tss program, manually created for tss.c	}
-{									}
-{ Copyright (c)	Andrew Falanga 						}
-{ April 24, 2001							}
-{-----------------------------------------------------------------------}
-*/
+ *
+ *  tss_common.h
+ *
+ *  Desc: headerfile for the tss program, manually created for tss.c
+ *
+ *  Copyright (c)        Andrew Falanga
+ *  April 24, 2001, 2023
+ *
+ */
 
-#ifndef _tss_h_
-#define _tss_h_
+#ifndef _TSS_COMMON_H
+#define _TSS_COMMON_H
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -34,21 +34,48 @@
 
 /* ------------------------------------------------------------------- */
 
-#define PORT 5035	/* arbitrary port, no reason */
-#define SLEEP_INTERVAL 14400 /* 4 hours, wake up 6 times a day */
+#define PORT 25035             /* arbitrary port, no reason */
+#define SLEEP_INTERVAL 14400   /* 4 hours, wake up 6 times a day */
 #define SHUTDOWN_INTERVAL 300  /* 5 minutes */
-#define MYBUFF 6 /* max size for string buffers */
-#define MSG_LEN 4 /* length of bytes transmitted or received */
+#define MYBUFF 6               /* max size for string buffers */
+#define MSG_LEN 4              /* length of bytes transmitted or received */
 #define USGERR "tssd must be supplied either host names or -v for version\n"
-#define VERSION "This is version 3.5.01 of The Shutdown Server\n"
+#define VERSION "3.5.01\n"
 #define MESSAGE "Agents notified of admin shutdown, gracefully exiting"
 
 /* ------------------------------------------------------------------- */
 
-typedef enum Stat {startup, run, vulnerable, shdown} Cur_Stat;
-typedef enum trans {hello, pwroff, pwron, admact, chkup} Message;
+#define MSG_HELLO   ":->0"
+#define MSG_PWR_OFF ":-(0"
+#define MSG_PWR_ON  ":-)0"
+#define MSG_ADM_ACT ":-|0"
+#define MSG_CHK_IN  ";->0"
 
-/* ------------------------------------------------------------------- */
+typedef uint8_t boolean;
+
+typedef enum {
+    Startup,
+    Run,
+    Vulnerable,
+    Shutdown
+} Status;
+
+typedef enum {
+    Hello,
+    PowerOff,
+    PowerOn,
+    AdminAction,
+    CheckIn
+} Message;
+
+/*
+ * Probably a poor design, but I was a young programmer 22 years ago. I used the happy/sad
+ * faces which also represented PowerOn/PowerOff.
+ */
+typedef enum {
+    PositiveAck = (int)PowerOn,
+    NegativeAck = (int)PowerOff,
+} Acks;
 
 int processID(void); // prototype, source in tss_func.c
 void tssfork(void); // prototype, source in tss_func.c
@@ -60,7 +87,10 @@ int receivemsg(int, char *); // prototype, source in tss_func.c
 int sendmesg(int, const char *); // prototype, source in tss_func.c
 int openchannel(int *); // prototype, source in tss_func.c
 
-/* ------------------------------------------------------------------- */
-
+boolean IsHello(const char*);
+boolean IsPowerOn(const char*);
+boolean IsPowerOff(const char*);
+boolean IsAdminAction(const char*);
+boolean IsCheckIn(const char*);
 
 #endif
