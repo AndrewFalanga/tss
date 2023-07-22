@@ -108,6 +108,8 @@ Message p_string(const char *str)
 
   if(strstr(str, MSG_ADM_ACT))
     return AdminAction;
+
+  return (Message)"";
 }
 
 /*

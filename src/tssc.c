@@ -1,43 +1,43 @@
 /*
- *                                                                        }
- *  Copyright 2001, 2023 (c) Andrew Falanga                                          }
  *
- *  Program:    tssc.c                                                    }
- *                                                                        }
- *  Desc:        The client side to "The Shutdown Server"                 }
- *                                                                        }
- *  Purp:        To run in daemon mode, open a connection to the tss      }
- *         over IP and basically monitor what's happening and             }
- *         in the event that the server sends out a disaster              }
- *         broadcast, perform a clean shutdown of the file system         }
- *         and OS.                                                        }
- *                                                                        }
- *  Date Created:    May 7, 2001                                          }
- *  DLM:        March 19, 2002                                            }
- *                                                                        }
- *  Change log:                                                           }
- *  YYYYMMDD     reason for change                                        }
- *  20010508    further work on the code                                  }
- *  20010509    further development, (see notes below for detail)         }
- *  20010510    further development, (see notes below for detail)         }
- *  20010531    redid code so that enters daemon mode upon                }
- *         instantiation, rather than after the monitor starts.           }
- *         Hopefully, with these mod's the program can be added to        }
- *         rc.local and start as a system process.                        }
- *  20011217    added support for the newly written p_string()            }
- *  20230212  Long time! Wow, I was dumb for making such a ridiculous     }
- *            header. Yeah, it looks good, but really! Too much!          }
- *                                                                        }
- *  Notes:                                                                }
- *     coded enough that the client now opens connection, and sends       }
- *     a string to which the server appends a new string and returns      }
- *     the appended string                                                }
- *                                                                        }
- *     Realized today that I'd been thinking about this the wrong way     }
- *     Instead of the server listening for incoming connections           }
- *     it should be the clients listening for ther server                 }
- *     The code must be reworked to reflect the new design                }
- * -----------------------------------------------------------------------}
+ *  Copyright 2001, 2023 (c) Andrew Falanga
+ *
+ *  Program:    tssc.c
+ *
+ *  Desc:        The client side to "The Shutdown Server"
+ *
+ *  Purp:        To run in daemon mode, open a connection to the tss
+ *         over IP and basically monitor what's happening and
+ *         in the event that the server sends out a disaster
+ *         broadcast, perform a clean shutdown of the file system
+ *         and OS.
+ *
+ *  Date Created:    May 7, 2001
+ *  DLM:        March 19, 2002
+ *
+ *  Change log:
+ *  YYYYMMDD     reason for change
+ *  20010508    further work on the code
+ *  20010509    further development, (see notes below for detail)
+ *  20010510    further development, (see notes below for detail)
+ *  20010531    redid code so that enters daemon mode upon
+ *         instantiation, rather than after the monitor starts.
+ *         Hopefully, with these mod's the program can be added to
+ *         rc.local and start as a system process.
+ *  20011217    added support for the newly written p_string()
+ *  20230212  Long time! Wow, I was dumb for making such a ridiculous
+ *            header. Yeah, it looks good, but really! Too much!
+ *
+ *  Notes:
+ *     coded enough that the client now opens connection, and sends
+ *     a string to which the server appends a new string and returns
+ *     the appended string
+ *
+ *     Realized today that I'd been thinking about this the wrong way
+ *     Instead of the server listening for incoming connections
+ *     it should be the clients listening for ther server
+ *     The code must be reworked to reflect the new design
+ *
  */
 
 #include "tss_common.h"
@@ -61,9 +61,11 @@ int main(int argc, char **argv)
 {
     char buff[MYBUFF];
 
-    int socket1, socket2, mon_len;
+    int socket1 = -1;
+    int socket2 = -1;
+    int mon_len __attribute__((unused));
 
-    struct linger    linger_val;
+    struct linger    linger_val __attribute__((unused));
     struct sockaddr_in mon_adr, my_adr;
 
     pid_t childpid;
@@ -125,11 +127,11 @@ int main(int argc, char **argv)
 #endif
 
         /* TODO these need to be better */
-        while(r=receivemsg(socket2, buff))
+        while((r=receivemsg(socket2, buff)))
         {
             if(r == 4) break;
         }
-        while(w=sendmesg(socket2, MsgText[PositiveAck]))
+        while((w=sendmesg(socket2, MsgText[PositiveAck])))
         {
             if(w == r) break;
         }
