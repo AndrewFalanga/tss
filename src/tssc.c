@@ -136,7 +136,7 @@ int main(int argc, char **argv)
             if(w == r) break;
         }
 
-        takeaction(p_string(buff), &childpid);
+        takeaction(MessageKey(buff), &childpid);
 
         memset(buff, 0, MYBUFF);
         r = 0, w = 0;
@@ -148,12 +148,12 @@ int main(int argc, char **argv)
 
 /*
 {-----------------------------------------------------------------------}
-{ Function:    Shutdown                        }
-{                                    }
-{ Purpose:    This functions passes a series of commands to a shell    }
-{        after sleeping for the alloted, at the time of this    }
-{        writing that was 5 minutes (see tss.h).  The function    }
-{        is executed by a child process of this program        }
+{ Function:    Shutdown                                                 }
+{                                                                       }
+{ Purpose:    This functions passes a series of commands to a shell     }
+{        after sleeping for the alloted, at the time of this            }
+{        writing that was 5 minutes (see tss.h).  The function          }
+{        is executed by a child process of this program                 }
 {-----------------------------------------------------------------------}
 */
 
@@ -172,12 +172,12 @@ static void GracefulShutdown(void)
 
 /*
 {-----------------------------------------------------------------------}
-{ Function:    SigHandler                        }
-{                                    }
-{ Purpose:    This function will handle things when the TERM signal    }
-{        has been received.  Either explicitly, by an admin, or    }
-{        implicitly by a system shutdown                }
-{                                    }
+{ Function:    SigHandler                                               }
+{                                                                       }
+{ Purpose:    This function will handle things when the TERM signal     }
+{        has been received.  Either explicitly, by an admin, or         }
+{        implicitly by a system shutdown                                }
+{                                                                       }
 {-----------------------------------------------------------------------}
 */
 static void SigHandler(int x)
@@ -191,7 +191,7 @@ static void SigHandler(int x)
 { Function:    takeaction                                               }
 {                                                                       }
 { Purpose:    This function will take appropriate action based upon     }
-{        the result of the return of p_string().                        }
+{        the result of the return of MessageValue().                    }
 {                                                                       }
 {-----------------------------------------------------------------------}
 */

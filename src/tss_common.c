@@ -72,8 +72,8 @@ int processID(void)
 }
 
 /*
- * Function:        p_string(char*)
- * Purpose:        This function serves the purpose of parsing the actual
+ * Function:      MessageKey(char*)
+ * Purpose:       This function serves the purpose of parsing the actual
  *                contents of the buffer to which data, transmitted from
  *                the monitor to agents, is stored.  Determine what the
  *                message is, and return an integer value to correspond
@@ -92,24 +92,27 @@ int processID(void)
  */
 
 /* TODO change the name of this */
-Message p_string(const char *str)
+Message MessageKey(const char *str)
 {
-  if(strstr(str, MSG_CHK_IN))
-    return CheckIn;
+    Message Msg = Error;
 
-  if(strstr(str, MSG_HELLO))
-    return Hello;
+    if(strstr(str, MSG_CHK_IN))
+        Msg = CheckIn;
 
-  if(strstr(str, MSG_PWR_OFF))
-    return PowerOff;
+    else if(strstr(str, MSG_HELLO))
+        Msg = Hello;
 
-  if(strstr(str, MSG_PWR_ON))
-    return PowerOn;
+    else if(strstr(str, MSG_PWR_OFF))
+        Msg = PowerOff;
 
-  if(strstr(str, MSG_ADM_ACT))
-    return AdminAction;
+    else if(strstr(str, MSG_PWR_ON))
+        Msg = PowerOn;
 
-  return (Message)"";
+    else if(strstr(str, MSG_ADM_ACT))
+        Msg = AdminAction;
+    else Msg = Error;
+
+    return Msg;
 }
 
 /*
@@ -121,7 +124,7 @@ Message p_string(const char *str)
  */
 boolean IsHello(const char* s)
 {
-    return p_string(s) == Hello;
+    return MessageKey(s) == Hello;
 }
 
 /*
@@ -133,7 +136,7 @@ boolean IsHello(const char* s)
  */
 boolean IsPowerOn(const char* s)
 {
-    return p_string(s) == PowerOn;
+    return MessageKey(s) == PowerOn;
 }
 
 /*
@@ -145,7 +148,7 @@ boolean IsPowerOn(const char* s)
  */
 boolean IsPowerOff(const char* s)
 {
-    return p_string(s) == PowerOff;
+    return MessageKey(s) == PowerOff;
 }
 
 /*
@@ -157,7 +160,7 @@ boolean IsPowerOff(const char* s)
  */
 boolean IsAdminAction(const char* s)
 {
-    return p_string(s) == AdminAction;
+    return MessageKey(s) == AdminAction;
 }
 
 /*
@@ -169,12 +172,12 @@ boolean IsAdminAction(const char* s)
  */
 boolean IsCheckIn(const char* s)
 {
-    return p_string(s) == CheckIn;
+    return MessageKey(s) == CheckIn;
 }
 
 /*
  * Func:        usgerr
- * Pur:                to display the correct usage of this program
+ * Pur:         to display the correct usage of this program
  *
  */
 
