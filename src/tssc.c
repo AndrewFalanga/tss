@@ -1,43 +1,43 @@
 /*
- *                                                                        }
- *  Copyright 2001, 2023 (c) Andrew Falanga                                          }
  *
- *  Program:    tssc.c                                                    }
- *                                                                        }
- *  Desc:        The client side to "The Shutdown Server"                 }
- *                                                                        }
- *  Purp:        To run in daemon mode, open a connection to the tss      }
- *         over IP and basically monitor what's happening and             }
- *         in the event that the server sends out a disaster              }
- *         broadcast, perform a clean shutdown of the file system         }
- *         and OS.                                                        }
- *                                                                        }
- *  Date Created:    May 7, 2001                                          }
- *  DLM:        March 19, 2002                                            }
- *                                                                        }
- *  Change log:                                                           }
- *  YYYYMMDD     reason for change                                        }
- *  20010508    further work on the code                                  }
- *  20010509    further development, (see notes below for detail)         }
- *  20010510    further development, (see notes below for detail)         }
- *  20010531    redid code so that enters daemon mode upon                }
- *         instantiation, rather than after the monitor starts.           }
- *         Hopefully, with these mod's the program can be added to        }
- *         rc.local and start as a system process.                        }
- *  20011217    added support for the newly written p_string()            }
- *  20230212  Long time! Wow, I was dumb for making such a ridiculous     }
- *            header. Yeah, it looks good, but really! Too much!          }
- *                                                                        }
- *  Notes:                                                                }
- *     coded enough that the client now opens connection, and sends       }
- *     a string to which the server appends a new string and returns      }
- *     the appended string                                                }
- *                                                                        }
- *     Realized today that I'd been thinking about this the wrong way     }
- *     Instead of the server listening for incoming connections           }
- *     it should be the clients listening for ther server                 }
- *     The code must be reworked to reflect the new design                }
- * -----------------------------------------------------------------------}
+ *  Copyright 2001, 2023 (c) Andrew Falanga
+ *
+ *  Program:    tssc.c
+ *
+ *  Desc:        The client side to "The Shutdown Server"
+ *
+ *  Purp:        To run in daemon mode, open a connection to the tss
+ *         over IP and basically monitor what's happening and
+ *         in the event that the server sends out a disaster
+ *         broadcast, perform a clean shutdown of the file system
+ *         and OS.
+ *
+ *  Date Created:    May 7, 2001
+ *  DLM:        March 19, 2002
+ *
+ *  Change log:
+ *  YYYYMMDD     reason for change
+ *  20010508    further work on the code
+ *  20010509    further development, (see notes below for detail)
+ *  20010510    further development, (see notes below for detail)
+ *  20010531    redid code so that enters daemon mode upon
+ *         instantiation, rather than after the monitor starts.
+ *         Hopefully, with these mod's the program can be added to
+ *         rc.local and start as a system process.
+ *  20011217    added support for the newly written p_string()
+ *  20230212  Long time! Wow, I was dumb for making such a ridiculous
+ *            header. Yeah, it looks good, but really! Too much!
+ *
+ *  Notes:
+ *     coded enough that the client now opens connection, and sends
+ *     a string to which the server appends a new string and returns
+ *     the appended string
+ *
+ *     Realized today that I'd been thinking about this the wrong way
+ *     Instead of the server listening for incoming connections
+ *     it should be the clients listening for ther server
+ *     The code must be reworked to reflect the new design
+ *
  */
 
 #include "tss_common.h"
@@ -61,9 +61,11 @@ int main(int argc, char **argv)
 {
     char buff[MYBUFF];
 
-    int socket1, socket2, mon_len;
+    int socket1 = -1;
+    int socket2 = -1;
+    int mon_len __attribute__((unused));
 
-    struct linger    linger_val;
+    struct linger    linger_val __attribute__((unused));
     struct sockaddr_in mon_adr, my_adr;
 
     pid_t childpid;
@@ -125,16 +127,16 @@ int main(int argc, char **argv)
 #endif
 
         /* TODO these need to be better */
-        while(r=receivemsg(socket2, buff))
+        while((r=receivemsg(socket2, buff)))
         {
             if(r == 4) break;
         }
-        while(w=sendmesg(socket2, MsgText[PositiveAck]))
+        while((w=sendmesg(socket2, MsgText[PositiveAck])))
         {
             if(w == r) break;
         }
 
-        takeaction(p_string(buff), &childpid);
+        takeaction(MessageKey(buff), &childpid);
 
         memset(buff, 0, MYBUFF);
         r = 0, w = 0;
@@ -146,12 +148,12 @@ int main(int argc, char **argv)
 
 /*
 {-----------------------------------------------------------------------}
-{ Function:    Shutdown                        }
-{                                    }
-{ Purpose:    This functions passes a series of commands to a shell    }
-{        after sleeping for the alloted, at the time of this    }
-{        writing that was 5 minutes (see tss.h).  The function    }
-{        is executed by a child process of this program        }
+{ Function:    Shutdown                                                 }
+{                                                                       }
+{ Purpose:    This functions passes a series of commands to a shell     }
+{        after sleeping for the alloted, at the time of this            }
+{        writing that was 5 minutes (see tss.h).  The function          }
+{        is executed by a child process of this program                 }
 {-----------------------------------------------------------------------}
 */
 
@@ -170,12 +172,12 @@ static void GracefulShutdown(void)
 
 /*
 {-----------------------------------------------------------------------}
-{ Function:    SigHandler                        }
-{                                    }
-{ Purpose:    This function will handle things when the TERM signal    }
-{        has been received.  Either explicitly, by an admin, or    }
-{        implicitly by a system shutdown                }
-{                                    }
+{ Function:    SigHandler                                               }
+{                                                                       }
+{ Purpose:    This function will handle things when the TERM signal     }
+{        has been received.  Either explicitly, by an admin, or         }
+{        implicitly by a system shutdown                                }
+{                                                                       }
 {-----------------------------------------------------------------------}
 */
 static void SigHandler(int x)
@@ -189,7 +191,7 @@ static void SigHandler(int x)
 { Function:    takeaction                                               }
 {                                                                       }
 { Purpose:    This function will take appropriate action based upon     }
-{        the result of the return of p_string().                        }
+{        the result of the return of MessageValue().                    }
 {                                                                       }
 {-----------------------------------------------------------------------}
 */

@@ -51,6 +51,9 @@
 #define MSG_ADM_ACT ":-|0"
 #define MSG_CHK_IN  ";->0"
 
+#define TRUE        (1)
+#define FALSE       !(TRUE)
+
 typedef uint8_t boolean;
 
 typedef enum {
@@ -61,6 +64,7 @@ typedef enum {
 } Status;
 
 typedef enum {
+    Error = -1,
     Hello,
     PowerOff,
     PowerOn,
@@ -79,7 +83,7 @@ typedef enum {
 
 int processID(void); // prototype, source in tss_func.c
 void tssfork(void); // prototype, source in tss_func.c
-Message p_string(const char *); // prototype, source in tss_func.c
+Message MessageKey(const char *); // prototype, source in tss_func.c
 void usgerr(void); // prototype, source in tss_func.c
 void ver(void); // prototype, source in tss_func.c
 int tx_rx(int *, int); // prototype, source in tss_func.c
