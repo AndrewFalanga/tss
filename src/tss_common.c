@@ -205,7 +205,7 @@ int receivemsg(int sock, char *hold)
   int received=0;
   while(received != 4)
   {
-    received=recv(sock, hold, MSG_LEN, MSG_NOSIGNAL);
+    received=recv(sock, hold, MSG_LEN, MSG_WAITALL);
     if(received == 0)
       return received;
     hold += received;
@@ -217,7 +217,7 @@ int sendmesg(int sock, const char *hold)
 {
   int sent=0;
   while(sent !=4)
-    sent=send(sock, hold, MSG_LEN, MSG_NOSIGNAL);
+    sent=send(sock, hold, MSG_LEN, MSG_WAITALL);
 
   return sent;
 }
