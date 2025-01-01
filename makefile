@@ -1,10 +1,16 @@
 .PHONY: all clean
 
+ifneq ($(V),)
+override V :=
+else
+V=@
+endif
+
 CFLAGS = -Wall
 export CFLAGS
 
 all:
-	$(MAKE) -C src
+	$(V)$(MAKE) -C src
 
 clean:
-	$(MAKE) -C src $@
+	$(V)$(MAKE) -C src $@
