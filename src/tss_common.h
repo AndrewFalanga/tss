@@ -12,9 +12,9 @@
 #ifndef _TSS_COMMON_H
 #define _TSS_COMMON_H
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <iostream>
+#include <cstdlib>
+#include <cstring>
 #include <ctype.h>
 #include <signal.h>
 #include <unistd.h>
@@ -45,11 +45,12 @@
 
 /* ------------------------------------------------------------------- */
 
-#define MSG_HELLO   ":->0"
-#define MSG_PWR_OFF ":-(0"
-#define MSG_PWR_ON  ":-)0"
-#define MSG_ADM_ACT ":-|0"
-#define MSG_CHK_IN  ";->0"
+#define MSG_HELLO       ":->0"
+#define MSG_PWR_OFF     ":-(0"
+#define MSG_PWR_ON      ":-)0"
+#define MSG_ADM_ACT     ":-|0"
+#define MSG_CHK_IN      ";->0"
+#define MSG_CLIENT      "<<>>"
 
 #define TRUE        (1)
 #define FALSE       !(TRUE)

@@ -183,7 +183,7 @@ boolean IsCheckIn(const char* s)
 
 void usgerr()
 {
-  fprintf(stdout, "%s", USGERR);
+    std::cout << USGERR << std::endl;
 }
 
 /*
