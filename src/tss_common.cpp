@@ -37,16 +37,16 @@ const char *MsgText[] = {
 
 void tssfork(void)
 {
-  switch(fork())
-  {
-    case -1:
-        syslog(LOG_CRIT, "fork() didn't work, exiting");
-        exit(7);
-    case  0:        /* child process */
-        break;
-    default:        /* parent */
-        exit(0);
-  }
+    switch(fork())
+    {
+        case -1:
+            syslog(LOG_CRIT, "fork() didn't work, exiting");
+            exit(7);
+        case  0:        /* child process */
+            break;
+        default:        /* parent */
+            exit(0);
+    }
 }
 
 /*
@@ -61,14 +61,14 @@ void tssfork(void)
 
 int processID(void)
 {
-  FILE * fpid;
+    FILE * fpid;
 
-  if((fpid=fopen("/var/run/tss.pid", "w"))==NULL)
-   return 0;
+    if((fpid=fopen("/var/run/tss.pid", "w"))==NULL)
+        return 0;
 
-  fprintf(fpid, "%d\n", (int)getpid());
-  fclose(fpid);
-  return 1;
+    fprintf(fpid, "%d\n", (int)getpid());
+    fclose(fpid);
+    return 1;
 }
 
 /*
@@ -194,7 +194,7 @@ void usgerr()
 
 void ver()
 {
-  fprintf(stdout, "%s", VERSION);
+    fprintf(stdout, "%s", VERSION);
 }
 
 /*
@@ -205,24 +205,24 @@ void ver()
 
 int receivemsg(int sock, char *hold)
 {
-  int received=0;
-  while(received != 4)
-  {
-    received=recv(sock, hold, MSG_LEN, MSG_WAITALL);
-    if(received == 0)
-      return received;
-    hold += received;
-  }
-  return received;
+    int received=0;
+    while(received != 4)
+    {
+        received=recv(sock, hold, MSG_LEN, MSG_WAITALL);
+        if(received == 0)
+            return received;
+        hold += received;
+    }
+    return received;
 }
 
 int sendmesg(int sock, const char *hold)
 {
-  int sent=0;
-  while(sent !=4)
-    sent=send(sock, hold, MSG_LEN, MSG_WAITALL);
+    int sent=0;
+    while(sent !=4)
+        sent=send(sock, hold, MSG_LEN, MSG_WAITALL);
 
-  return sent;
+    return sent;
 }
 
 /*

@@ -1,11 +1,5 @@
 .PHONY: all clean
 
-ifneq ($(V),)
-override V :=
-else
-V=@
-endif
-
 CFLAGS = -Wall
 export CFLAGS
 
@@ -14,3 +8,5 @@ all:
 
 clean:
 	$(V)$(MAKE) -C src $@
+
+$(V).SILENT:
