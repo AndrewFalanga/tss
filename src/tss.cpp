@@ -40,6 +40,7 @@
  *  20010606        Added support for version indentification using -v
  *  20011211        added support for SIGTERM signal handling
  *  20230304    A better named common code and such.
+ *  20250101	Converting to C++ for objects
  *
  */
 
@@ -49,12 +50,10 @@
 
 extern const char* MsgText[];
 
-struct agent_ {
+typedef struct agent_ {
     struct sockaddr_in agent_adr;
     struct hostent * host;
-};
-
-typedef struct agent_ Agent;
+} Agent;
 
 Agent * agent;
 int num_agents; /* for host count, argc -1 */
@@ -262,7 +261,7 @@ int main(int argc, char **argv)
   num_agents = argc-1;
   if ((agent = (Agent *) malloc(num_agents*sizeof(Agent)))==NULL)
   {
-    fprintf(stderr, "Mem allocation failed, bailing out\n");
+    std::cerr << "Mem allocation failed, bailing out" << std::endl;
     exit(2);
   }
 
