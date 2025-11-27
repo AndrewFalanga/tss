@@ -232,9 +232,7 @@ static void SigHandler(int sig)
     return;
 }
 
-static struct sigaction handler = {
-    .sa_handler = SigHandler
-};
+static struct sigaction handler;
 
 /* ------------------------------------------------------------------- */
 int main(int argc, char **argv)
@@ -245,6 +243,7 @@ int main(int argc, char **argv)
   int socket1, index;
   ssize_t w=0, r=0; //for read()/write() values
 
+  handler.sa_handler = SigHandler;
   if (argc == 1)
   {
     usgerr();
