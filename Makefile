@@ -11,7 +11,7 @@ SRCS += tssc.cpp
 
 OBJS += $(SRCS:%.cpp=$(BUILD_DIR)/%.o)
 
-CPPFLAGS += -D_POSIX_C_SOURCE
+CPPFLAGS += -D_POSIX_C_SOURCE=200809L
 
 CFLAGS += -std=c++17 -Wall -Werror
 CFLAGS += -I$(SRC_DIR)
