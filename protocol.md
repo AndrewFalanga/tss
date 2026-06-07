@@ -45,7 +45,7 @@ The message is simple and really just informs power is on/off. The following sha
 the UPS software, and the monitors:
 
 | Symbol |  Meaning     |
-+--------+--------------+
+|--------|--------------|
 |  :-)   | Power is on  |
 |  :-(   | Power is off |
 
